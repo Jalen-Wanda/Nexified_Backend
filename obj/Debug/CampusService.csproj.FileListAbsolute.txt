@@ -1,0 +1,7 @@
+T:\Campus-master\Campus-master\obj\Debug\CampusService.csproj.CoreCompileInputs.cache
+T:\Campus-master\Campus-master\bin\CampusService.dll.config
+T:\Campus-master\Campus-master\bin\CampusService.dll
+T:\Campus-master\Campus-master\bin\CampusService.pdb
+T:\Campus-master\Campus-master\obj\Debug\CampusService.dll
+T:\Campus-master\Campus-master\obj\Debug\CampusService.pdb
+T:\Campus-master\Campus-master\obj\Debug\CampusService.csproj.AssemblyReference.cache

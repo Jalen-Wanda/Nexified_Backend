@@ -30,6 +30,9 @@ namespace CampusService
 		
     #region Extensibility Method Definitions
     partial void OnCreated();
+    partial void InsertCart(Cart instance);
+    partial void UpdateCart(Cart instance);
+    partial void DeleteCart(Cart instance);
     partial void InsertInvoice(Invoice instance);
     partial void UpdateInvoice(Invoice instance);
     partial void DeleteInvoice(Invoice instance);
@@ -39,6 +42,9 @@ namespace CampusService
     partial void InsertUser(User instance);
     partial void UpdateUser(User instance);
     partial void DeleteUser(User instance);
+    partial void InsertBid(Bid instance);
+    partial void UpdateBid(Bid instance);
+    partial void DeleteBid(Bid instance);
     partial void InsertProduct(Product instance);
     partial void UpdateProduct(Product instance);
     partial void DeleteProduct(Product instance);
@@ -74,6 +80,14 @@ namespace CampusService
 			OnCreated();
 		}
 		
+		public System.Data.Linq.Table<Cart> Carts
+		{
+			get
+			{
+				return this.GetTable<Cart>();
+			}
+		}
+		
 		public System.Data.Linq.Table<Invoice> Invoices
 		{
 			get
@@ -98,11 +112,259 @@ namespace CampusService
 			}
 		}
 		
+		public System.Data.Linq.Table<Bid> Bids
+		{
+			get
+			{
+				return this.GetTable<Bid>();
+			}
+		}
+		
 		public System.Data.Linq.Table<Product> Products
 		{
 			get
 			{
 				return this.GetTable<Product>();
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Cart")]
+	public partial class Cart : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _userId;
+		
+		private int _productId;
+		
+		private int _quantity;
+		
+		private System.DateTime _addedDate;
+		
+		private EntityRef<User> _User;
+		
+		private EntityRef<Product> _Product;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnuserIdChanging(int value);
+    partial void OnuserIdChanged();
+    partial void OnproductIdChanging(int value);
+    partial void OnproductIdChanged();
+    partial void OnquantityChanging(int value);
+    partial void OnquantityChanged();
+    partial void OnaddedDateChanging(System.DateTime value);
+    partial void OnaddedDateChanged();
+    #endregion
+		
+		public Cart()
+		{
+			this._User = default(EntityRef<User>);
+			this._Product = default(EntityRef<Product>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int NOT NULL")]
+		public int userId
+		{
+			get
+			{
+				return this._userId;
+			}
+			set
+			{
+				if ((this._userId != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnuserIdChanging(value);
+					this.SendPropertyChanging();
+					this._userId = value;
+					this.SendPropertyChanged("userId");
+					this.OnuserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_productId", DbType="Int NOT NULL")]
+		public int productId
+		{
+			get
+			{
+				return this._productId;
+			}
+			set
+			{
+				if ((this._productId != value))
+				{
+					if (this._Product.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnproductIdChanging(value);
+					this.SendPropertyChanging();
+					this._productId = value;
+					this.SendPropertyChanged("productId");
+					this.OnproductIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_quantity", DbType="Int NOT NULL")]
+		public int quantity
+		{
+			get
+			{
+				return this._quantity;
+			}
+			set
+			{
+				if ((this._quantity != value))
+				{
+					this.OnquantityChanging(value);
+					this.SendPropertyChanging();
+					this._quantity = value;
+					this.SendPropertyChanged("quantity");
+					this.OnquantityChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_addedDate", DbType="DateTime NOT NULL")]
+		public System.DateTime addedDate
+		{
+			get
+			{
+				return this._addedDate;
+			}
+			set
+			{
+				if ((this._addedDate != value))
+				{
+					this.OnaddedDateChanging(value);
+					this.SendPropertyChanging();
+					this._addedDate = value;
+					this.SendPropertyChanged("addedDate");
+					this.OnaddedDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Cart", Storage="_User", ThisKey="userId", OtherKey="Id", IsForeignKey=true)]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.Carts.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.Carts.Add(this);
+						this._userId = value.Id;
+					}
+					else
+					{
+						this._userId = default(int);
+					}
+					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_Cart", Storage="_Product", ThisKey="productId", OtherKey="Id", IsForeignKey=true)]
+		public Product Product
+		{
+			get
+			{
+				return this._Product.Entity;
+			}
+			set
+			{
+				Product previousValue = this._Product.Entity;
+				if (((previousValue != value) 
+							|| (this._Product.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Product.Entity = null;
+						previousValue.Carts.Remove(this);
+					}
+					this._Product.Entity = value;
+					if ((value != null))
+					{
+						value.Carts.Add(this);
+						this._productId = value.Id;
+					}
+					else
+					{
+						this._productId = default(int);
+					}
+					this.SendPropertyChanged("Product");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
 	}
@@ -115,11 +377,13 @@ namespace CampusService
 		
 		private int _Id;
 		
+		private int _userId;
+		
 		private System.DateTime _date;
 		
 		private decimal _totalPrice;
 		
-		private int _userId;
+		private string _status;
 		
 		private EntitySet<InvoiceLine> _InvoiceLines;
 		
@@ -131,12 +395,14 @@ namespace CampusService
     partial void OnCreated();
     partial void OnIdChanging(int value);
     partial void OnIdChanged();
+    partial void OnuserIdChanging(int value);
+    partial void OnuserIdChanged();
     partial void OndateChanging(System.DateTime value);
     partial void OndateChanged();
     partial void OntotalPriceChanging(decimal value);
     partial void OntotalPriceChanged();
-    partial void OnuserIdChanging(int value);
-    partial void OnuserIdChanged();
+    partial void OnstatusChanging(string value);
+    partial void OnstatusChanged();
     #endregion
 		
 		public Invoice()
@@ -166,7 +432,31 @@ namespace CampusService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_date", DbType="Date NOT NULL")]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int NOT NULL")]
+		public int userId
+		{
+			get
+			{
+				return this._userId;
+			}
+			set
+			{
+				if ((this._userId != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnuserIdChanging(value);
+					this.SendPropertyChanging();
+					this._userId = value;
+					this.SendPropertyChanged("userId");
+					this.OnuserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_date", DbType="DateTime NOT NULL")]
 		public System.DateTime date
 		{
 			get
@@ -206,26 +496,22 @@ namespace CampusService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int NOT NULL")]
-		public int userId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_status", DbType="VarChar(50) NOT NULL", CanBeNull=false)]
+		public string status
 		{
 			get
 			{
-				return this._userId;
+				return this._status;
 			}
 			set
 			{
-				if ((this._userId != value))
+				if ((this._status != value))
 				{
-					if (this._User.HasLoadedOrAssignedValue)
-					{
-						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
-					}
-					this.OnuserIdChanging(value);
+					this.OnstatusChanging(value);
 					this.SendPropertyChanging();
-					this._userId = value;
-					this.SendPropertyChanged("userId");
-					this.OnuserIdChanged();
+					this._status = value;
+					this.SendPropertyChanged("status");
+					this.OnstatusChanged();
 				}
 			}
 		}
@@ -328,6 +614,8 @@ namespace CampusService
 		
 		private EntityRef<Invoice> _Invoice;
 		
+		private EntityRef<Product> _Product;
+		
     #region Extensibility Method Definitions
     partial void OnLoaded();
     partial void OnValidate(System.Data.Linq.ChangeAction action);
@@ -347,10 +635,11 @@ namespace CampusService
 		public InvoiceLine()
 		{
 			this._Invoice = default(EntityRef<Invoice>);
+			this._Product = default(EntityRef<Product>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int Id
 		{
 			get
@@ -405,6 +694,10 @@ namespace CampusService
 			{
 				if ((this._productId != value))
 				{
+					if (this._Product.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
 					this.OnproductIdChanging(value);
 					this.SendPropertyChanging();
 					this._productId = value;
@@ -488,6 +781,40 @@ namespace CampusService
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_InvoiceLine", Storage="_Product", ThisKey="productId", OtherKey="Id", IsForeignKey=true)]
+		public Product Product
+		{
+			get
+			{
+				return this._Product.Entity;
+			}
+			set
+			{
+				Product previousValue = this._Product.Entity;
+				if (((previousValue != value) 
+							|| (this._Product.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Product.Entity = null;
+						previousValue.InvoiceLines.Remove(this);
+					}
+					this._Product.Entity = value;
+					if ((value != null))
+					{
+						value.InvoiceLines.Add(this);
+						this._productId = value.Id;
+					}
+					else
+					{
+						this._productId = default(int);
+					}
+					this.SendPropertyChanged("Product");
+				}
+			}
+		}
+		
 		public event PropertyChangingEventHandler PropertyChanging;
 		
 		public event PropertyChangedEventHandler PropertyChanged;
@@ -523,9 +850,17 @@ namespace CampusService
 		
 		private string _password;
 		
+		private System.DateTime _registrationDate;
+		
+		private EntitySet<Cart> _Carts;
+		
 		private EntitySet<Invoice> _Invoices;
 		
+		private EntitySet<Bid> _Bids;
+		
 		private EntitySet<Product> _Products;
+		
+		private EntitySet<Product> _Products1;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -539,12 +874,17 @@ namespace CampusService
     partial void OnemailChanged();
     partial void OnpasswordChanging(string value);
     partial void OnpasswordChanged();
+    partial void OnregistrationDateChanging(System.DateTime value);
+    partial void OnregistrationDateChanged();
     #endregion
 		
 		public User()
 		{
+			this._Carts = new EntitySet<Cart>(new Action<Cart>(this.attach_Carts), new Action<Cart>(this.detach_Carts));
 			this._Invoices = new EntitySet<Invoice>(new Action<Invoice>(this.attach_Invoices), new Action<Invoice>(this.detach_Invoices));
+			this._Bids = new EntitySet<Bid>(new Action<Bid>(this.attach_Bids), new Action<Bid>(this.detach_Bids));
 			this._Products = new EntitySet<Product>(new Action<Product>(this.attach_Products), new Action<Product>(this.detach_Products));
+			this._Products1 = new EntitySet<Product>(new Action<Product>(this.attach_Products1), new Action<Product>(this.detach_Products1));
 			OnCreated();
 		}
 		
@@ -628,6 +968,39 @@ namespace CampusService
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_registrationDate", DbType="DateTime NOT NULL")]
+		public System.DateTime registrationDate
+		{
+			get
+			{
+				return this._registrationDate;
+			}
+			set
+			{
+				if ((this._registrationDate != value))
+				{
+					this.OnregistrationDateChanging(value);
+					this.SendPropertyChanging();
+					this._registrationDate = value;
+					this.SendPropertyChanged("registrationDate");
+					this.OnregistrationDateChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Cart", Storage="_Carts", ThisKey="Id", OtherKey="userId")]
+		public EntitySet<Cart> Carts
+		{
+			get
+			{
+				return this._Carts;
+			}
+			set
+			{
+				this._Carts.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Invoice", Storage="_Invoices", ThisKey="Id", OtherKey="userId")]
 		public EntitySet<Invoice> Invoices
 		{
@@ -641,6 +1014,19 @@ namespace CampusService
 			}
 		}
 		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Bid", Storage="_Bids", ThisKey="Id", OtherKey="userId")]
+		public EntitySet<Bid> Bids
+		{
+			get
+			{
+				return this._Bids;
+			}
+			set
+			{
+				this._Bids.Assign(value);
+			}
+		}
+		
 		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Product", Storage="_Products", ThisKey="Id", OtherKey="userId")]
 		public EntitySet<Product> Products
 		{
@@ -651,6 +1037,19 @@ namespace CampusService
 			set
 			{
 				this._Products.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Product1", Storage="_Products1", ThisKey="Id", OtherKey="currentWinnerId")]
+		public EntitySet<Product> Products1
+		{
+			get
+			{
+				return this._Products1;
+			}
+			set
+			{
+				this._Products1.Assign(value);
 			}
 		}
 		
@@ -674,6 +1073,18 @@ namespace CampusService
 			}
 		}
 		
+		private void attach_Carts(Cart entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_Carts(Cart entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
 		private void attach_Invoices(Invoice entity)
 		{
 			this.SendPropertyChanging();
@@ -681,6 +1092,18 @@ namespace CampusService
 		}
 		
 		private void detach_Invoices(Invoice entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = null;
+		}
+		
+		private void attach_Bids(Bid entity)
+		{
+			this.SendPropertyChanging();
+			entity.User = this;
+		}
+		
+		private void detach_Bids(Bid entity)
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
@@ -696,6 +1119,282 @@ namespace CampusService
 		{
 			this.SendPropertyChanging();
 			entity.User = null;
+		}
+		
+		private void attach_Products1(Product entity)
+		{
+			this.SendPropertyChanging();
+			entity.User1 = this;
+		}
+		
+		private void detach_Products1(Product entity)
+		{
+			this.SendPropertyChanging();
+			entity.User1 = null;
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.Bid")]
+	public partial class Bid : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private int _Id;
+		
+		private int _productId;
+		
+		private int _userId;
+		
+		private decimal _bidAmount;
+		
+		private System.DateTime _bidTime;
+		
+		private bool _isWinningBid;
+		
+		private EntityRef<User> _User;
+		
+		private EntityRef<Product> _Product;
+		
+    #region Extensibility Method Definitions
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnIdChanging(int value);
+    partial void OnIdChanged();
+    partial void OnproductIdChanging(int value);
+    partial void OnproductIdChanged();
+    partial void OnuserIdChanging(int value);
+    partial void OnuserIdChanged();
+    partial void OnbidAmountChanging(decimal value);
+    partial void OnbidAmountChanged();
+    partial void OnbidTimeChanging(System.DateTime value);
+    partial void OnbidTimeChanged();
+    partial void OnisWinningBidChanging(bool value);
+    partial void OnisWinningBidChanged();
+    #endregion
+		
+		public Bid()
+		{
+			this._User = default(EntityRef<User>);
+			this._Product = default(EntityRef<Product>);
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
+		public int Id
+		{
+			get
+			{
+				return this._Id;
+			}
+			set
+			{
+				if ((this._Id != value))
+				{
+					this.OnIdChanging(value);
+					this.SendPropertyChanging();
+					this._Id = value;
+					this.SendPropertyChanged("Id");
+					this.OnIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_productId", DbType="Int NOT NULL")]
+		public int productId
+		{
+			get
+			{
+				return this._productId;
+			}
+			set
+			{
+				if ((this._productId != value))
+				{
+					if (this._Product.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnproductIdChanging(value);
+					this.SendPropertyChanging();
+					this._productId = value;
+					this.SendPropertyChanged("productId");
+					this.OnproductIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int NOT NULL")]
+		public int userId
+		{
+			get
+			{
+				return this._userId;
+			}
+			set
+			{
+				if ((this._userId != value))
+				{
+					if (this._User.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OnuserIdChanging(value);
+					this.SendPropertyChanging();
+					this._userId = value;
+					this.SendPropertyChanged("userId");
+					this.OnuserIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bidAmount", DbType="Decimal(18,2) NOT NULL")]
+		public decimal bidAmount
+		{
+			get
+			{
+				return this._bidAmount;
+			}
+			set
+			{
+				if ((this._bidAmount != value))
+				{
+					this.OnbidAmountChanging(value);
+					this.SendPropertyChanging();
+					this._bidAmount = value;
+					this.SendPropertyChanged("bidAmount");
+					this.OnbidAmountChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_bidTime", DbType="DateTime NOT NULL")]
+		public System.DateTime bidTime
+		{
+			get
+			{
+				return this._bidTime;
+			}
+			set
+			{
+				if ((this._bidTime != value))
+				{
+					this.OnbidTimeChanging(value);
+					this.SendPropertyChanging();
+					this._bidTime = value;
+					this.SendPropertyChanged("bidTime");
+					this.OnbidTimeChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_isWinningBid", DbType="Bit NOT NULL")]
+		public bool isWinningBid
+		{
+			get
+			{
+				return this._isWinningBid;
+			}
+			set
+			{
+				if ((this._isWinningBid != value))
+				{
+					this.OnisWinningBidChanging(value);
+					this.SendPropertyChanging();
+					this._isWinningBid = value;
+					this.SendPropertyChanged("isWinningBid");
+					this.OnisWinningBidChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Bid", Storage="_User", ThisKey="userId", OtherKey="Id", IsForeignKey=true)]
+		public User User
+		{
+			get
+			{
+				return this._User.Entity;
+			}
+			set
+			{
+				User previousValue = this._User.Entity;
+				if (((previousValue != value) 
+							|| (this._User.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User.Entity = null;
+						previousValue.Bids.Remove(this);
+					}
+					this._User.Entity = value;
+					if ((value != null))
+					{
+						value.Bids.Add(this);
+						this._userId = value.Id;
+					}
+					else
+					{
+						this._userId = default(int);
+					}
+					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_Bid", Storage="_Product", ThisKey="productId", OtherKey="Id", IsForeignKey=true)]
+		public Product Product
+		{
+			get
+			{
+				return this._Product.Entity;
+			}
+			set
+			{
+				Product previousValue = this._Product.Entity;
+				if (((previousValue != value) 
+							|| (this._Product.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._Product.Entity = null;
+						previousValue.Bids.Remove(this);
+					}
+					this._Product.Entity = value;
+					if ((value != null))
+					{
+						value.Bids.Add(this);
+						this._productId = value.Id;
+					}
+					else
+					{
+						this._productId = default(int);
+					}
+					this.SendPropertyChanged("Product");
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
 		}
 	}
 	
@@ -717,15 +1416,29 @@ namespace CampusService
 		
 		private int _active;
 		
-		private string _quantity;
+		private int _quatity;
 		
 		private string _icon;
 		
-		private System.DateTime _dateBid;
+		private System.Nullable<System.DateTime> _dateBid;
 		
-		private int _userId;
+		private System.Nullable<int> _userId;
+		
+		private string _approvalStatus;
+		
+		private System.DateTime _dateAdded;
+		
+		private System.Nullable<int> _currentWinnerId;
+		
+		private EntitySet<Cart> _Carts;
+		
+		private EntitySet<InvoiceLine> _InvoiceLines;
+		
+		private EntitySet<Bid> _Bids;
 		
 		private EntityRef<User> _User;
+		
+		private EntityRef<User> _User1;
 		
     #region Extensibility Method Definitions
     partial void OnLoaded();
@@ -743,23 +1456,33 @@ namespace CampusService
     partial void OndescriptionChanged();
     partial void OnactiveChanging(int value);
     partial void OnactiveChanged();
-    partial void OnquantityChanging(string value);
-    partial void OnquantityChanged();
+    partial void OnquatityChanging(int value);
+    partial void OnquatityChanged();
     partial void OniconChanging(string value);
     partial void OniconChanged();
-    partial void OndateBidChanging(System.DateTime value);
+    partial void OndateBidChanging(System.Nullable<System.DateTime> value);
     partial void OndateBidChanged();
-    partial void OnuserIdChanging(int value);
+    partial void OnuserIdChanging(System.Nullable<int> value);
     partial void OnuserIdChanged();
+    partial void OnapprovalStatusChanging(string value);
+    partial void OnapprovalStatusChanged();
+    partial void OndateAddedChanging(System.DateTime value);
+    partial void OndateAddedChanged();
+    partial void OncurrentWinnerIdChanging(System.Nullable<int> value);
+    partial void OncurrentWinnerIdChanged();
     #endregion
 		
 		public Product()
 		{
+			this._Carts = new EntitySet<Cart>(new Action<Cart>(this.attach_Carts), new Action<Cart>(this.detach_Carts));
+			this._InvoiceLines = new EntitySet<InvoiceLine>(new Action<InvoiceLine>(this.attach_InvoiceLines), new Action<InvoiceLine>(this.detach_InvoiceLines));
+			this._Bids = new EntitySet<Bid>(new Action<Bid>(this.attach_Bids), new Action<Bid>(this.detach_Bids));
 			this._User = default(EntityRef<User>);
+			this._User1 = default(EntityRef<User>);
 			OnCreated();
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", DbType="Int NOT NULL", IsPrimaryKey=true)]
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int Id
 		{
 			get
@@ -879,22 +1602,22 @@ namespace CampusService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_quantity", DbType="VarChar(MAX) NOT NULL", CanBeNull=false)]
-		public string quantity
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_quatity", DbType="Int NOT NULL")]
+		public int quatity
 		{
 			get
 			{
-				return this._quantity;
+				return this._quatity;
 			}
 			set
 			{
-				if ((this._quantity != value))
+				if ((this._quatity != value))
 				{
-					this.OnquantityChanging(value);
+					this.OnquatityChanging(value);
 					this.SendPropertyChanging();
-					this._quantity = value;
-					this.SendPropertyChanged("quantity");
-					this.OnquantityChanged();
+					this._quatity = value;
+					this.SendPropertyChanged("quatity");
+					this.OnquatityChanged();
 				}
 			}
 		}
@@ -919,8 +1642,8 @@ namespace CampusService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_dateBid", DbType="Date NOT NULL")]
-		public System.DateTime dateBid
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_dateBid", DbType="DateTime")]
+		public System.Nullable<System.DateTime> dateBid
 		{
 			get
 			{
@@ -939,8 +1662,8 @@ namespace CampusService
 			}
 		}
 		
-		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int NOT NULL")]
-		public int userId
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_userId", DbType="Int")]
+		public System.Nullable<int> userId
 		{
 			get
 			{
@@ -960,6 +1683,109 @@ namespace CampusService
 					this.SendPropertyChanged("userId");
 					this.OnuserIdChanged();
 				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_approvalStatus", DbType="VarChar(20) NOT NULL", CanBeNull=false)]
+		public string approvalStatus
+		{
+			get
+			{
+				return this._approvalStatus;
+			}
+			set
+			{
+				if ((this._approvalStatus != value))
+				{
+					this.OnapprovalStatusChanging(value);
+					this.SendPropertyChanging();
+					this._approvalStatus = value;
+					this.SendPropertyChanged("approvalStatus");
+					this.OnapprovalStatusChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_dateAdded", DbType="DateTime NOT NULL")]
+		public System.DateTime dateAdded
+		{
+			get
+			{
+				return this._dateAdded;
+			}
+			set
+			{
+				if ((this._dateAdded != value))
+				{
+					this.OndateAddedChanging(value);
+					this.SendPropertyChanging();
+					this._dateAdded = value;
+					this.SendPropertyChanged("dateAdded");
+					this.OndateAddedChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_currentWinnerId", DbType="Int")]
+		public System.Nullable<int> currentWinnerId
+		{
+			get
+			{
+				return this._currentWinnerId;
+			}
+			set
+			{
+				if ((this._currentWinnerId != value))
+				{
+					if (this._User1.HasLoadedOrAssignedValue)
+					{
+						throw new System.Data.Linq.ForeignKeyReferenceAlreadyHasValueException();
+					}
+					this.OncurrentWinnerIdChanging(value);
+					this.SendPropertyChanging();
+					this._currentWinnerId = value;
+					this.SendPropertyChanged("currentWinnerId");
+					this.OncurrentWinnerIdChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_Cart", Storage="_Carts", ThisKey="Id", OtherKey="productId")]
+		public EntitySet<Cart> Carts
+		{
+			get
+			{
+				return this._Carts;
+			}
+			set
+			{
+				this._Carts.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_InvoiceLine", Storage="_InvoiceLines", ThisKey="Id", OtherKey="productId")]
+		public EntitySet<InvoiceLine> InvoiceLines
+		{
+			get
+			{
+				return this._InvoiceLines;
+			}
+			set
+			{
+				this._InvoiceLines.Assign(value);
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="Product_Bid", Storage="_Bids", ThisKey="Id", OtherKey="productId")]
+		public EntitySet<Bid> Bids
+		{
+			get
+			{
+				return this._Bids;
+			}
+			set
+			{
+				this._Bids.Assign(value);
 			}
 		}
 		
@@ -990,9 +1816,43 @@ namespace CampusService
 					}
 					else
 					{
-						this._userId = default(int);
+						this._userId = default(Nullable<int>);
 					}
 					this.SendPropertyChanged("User");
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.AssociationAttribute(Name="User_Product1", Storage="_User1", ThisKey="currentWinnerId", OtherKey="Id", IsForeignKey=true)]
+		public User User1
+		{
+			get
+			{
+				return this._User1.Entity;
+			}
+			set
+			{
+				User previousValue = this._User1.Entity;
+				if (((previousValue != value) 
+							|| (this._User1.HasLoadedOrAssignedValue == false)))
+				{
+					this.SendPropertyChanging();
+					if ((previousValue != null))
+					{
+						this._User1.Entity = null;
+						previousValue.Products1.Remove(this);
+					}
+					this._User1.Entity = value;
+					if ((value != null))
+					{
+						value.Products1.Add(this);
+						this._currentWinnerId = value.Id;
+					}
+					else
+					{
+						this._currentWinnerId = default(Nullable<int>);
+					}
+					this.SendPropertyChanged("User1");
 				}
 			}
 		}
@@ -1015,6 +1875,42 @@ namespace CampusService
 			{
 				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
+		}
+		
+		private void attach_Carts(Cart entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = this;
+		}
+		
+		private void detach_Carts(Cart entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = null;
+		}
+		
+		private void attach_InvoiceLines(InvoiceLine entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = this;
+		}
+		
+		private void detach_InvoiceLines(InvoiceLine entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = null;
+		}
+		
+		private void attach_Bids(Bid entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = this;
+		}
+		
+		private void detach_Bids(Bid entity)
+		{
+			this.SendPropertyChanging();
+			entity.Product = null;
 		}
 	}
 }

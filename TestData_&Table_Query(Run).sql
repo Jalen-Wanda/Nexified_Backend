@@ -49,3 +49,18 @@ VALUES
 (4, 3, 3, 1, 799.99);
 ALTER TABLE Product ADD userId INT NULL;
 ALTER TABLE Product ADD CONSTRAINT FK_Product_User FOREIGN KEY (userId) REFERENCES [User](Id);
+-- Insert sample bids for testing
+INSERT INTO [dbo].[Bid] ([productId], [userId], [bidAmount], [bidTime], [isWinningBid])
+VALUES 
+(9, 1, 5500.00, DATEADD(HOUR, -2, GETDATE()), 0),  -- John bid on iPad
+(9, 2, 5800.00, DATEADD(HOUR, -1, GETDATE()), 1),  -- Sarah outbid John (current winner)
+(10, 1, 1400.00, DATEADD(HOUR, -3, GETDATE()), 1), -- John bid on headphones
+(11, 3, 350.00, DATEADD(HOUR, -1, GETDATE()), 1);  -- Mike bid on calculator
+
+-- Update products with current winners
+ALTER TABLE Product
+ADD currentWinnerId INT NOT NULL;
+
+UPDATE [dbo].[Product] SET [currentWinnerId] = 2 WHERE [Id] = 9;  -- iPad - Sarah
+UPDATE [dbo].[Product] SET [currentWinnerId] = 1 WHERE [Id] = 10; -- Headphones - John
+UPDATE [dbo].[Product] SET [currentWinnerId] = 3 WHERE [Id] = 11; -- Calculator - Mike
