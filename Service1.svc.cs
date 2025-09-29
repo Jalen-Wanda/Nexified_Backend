@@ -64,12 +64,12 @@ namespace CampusService
             };
         }
 
-        public Product GetProductByUserEmail(string email)
+        public List<Product> GetProductByUserEmail(string email)
         {
             var user = (from u in db.Users where u.email.Equals(email) select u).FirstOrDefault();
             if (user == null) return null;
 
-            var product = (from p in db.Products where p.userId.Equals(user.Id) select p).FirstOrDefault();
+            dynamic product = (from p in db.Products where p.userId.Equals(user.Id) select p).FirstOrDefault();
             return product;
         }
 
@@ -91,20 +91,25 @@ namespace CampusService
 
         public int Register(User argUser)
         {
-            var user = (from u in db.Users where u.email.Equals(argUser.email) select u).FirstOrDefault();
+            
 
             try
             {
+                var user = (from u in db.Users where u.email.Equals(argUser.email) select u).FirstOrDefault();
                 if (user != null) return 1;
+
                 else
                 {
                     db.Users.InsertOnSubmit(argUser);
                     db.SubmitChanges();
                     return 0;
                 }
+             
             }
             catch (Exception e)
             {
+                System.Diagnostics.Debug.WriteLine($"Registration Error: {e.Message}");
+                System.Diagnostics.Debug.WriteLine($"Stack Trace: {e.StackTrace}");
                 e.GetBaseException();
                 return -1;
             }
@@ -182,7 +187,7 @@ namespace CampusService
             }
         }
 
-       
+
         public int CreateInvoice(int userId, decimal totalAmount)
         {
             try
@@ -324,7 +329,7 @@ namespace CampusService
             }
         }
 
-    public int GetProductsSoldCount(DateTime startDate, DateTime endDate)
+        public int GetProductsSoldCount(DateTime startDate, DateTime endDate)
         {
             try
             {
@@ -359,7 +364,7 @@ namespace CampusService
             }
         }
 
-        
+
 
         public decimal GetTotalRevenue(DateTime startDate, DateTime endDate)
         {
@@ -654,7 +659,7 @@ namespace CampusService
                 int cumulative = 0;
                 foreach (var day in dailyRegs)
                 {
-                    cumulative = cumulative + day.Count;  // Fixed the += syntax error
+                    cumulative = cumulative + day.Count;
                     dt.Rows.Add(day.Date.ToString("yyyy-MM-dd"), day.Count, cumulative);
                 }
             }
@@ -716,7 +721,7 @@ namespace CampusService
                 return 0;
             }
         }
-       
+
 
         public List<Product> SearchProducts(string searchTerm)
         {
@@ -909,5 +914,50 @@ namespace CampusService
                 return null;
             }
         }
+        public ReportData getReportData(DateTime startDate, DateTime endDate)
+        {
+            var report = new ReportData();
+
+            // Basic metrics
+            report.ProductsSoldCount = GetProductsSoldCount(startDate, endDate);
+            report.TotalStockCount = GetTotalStockCount();
+            report.TotalRevenue = GetTotalRevenue(startDate, endDate);
+            report.ActiveUsersCount = GetActiveUsersCount(startDate, endDate);
+            report.TopSpenderAmount = GetTopSpenderAmount(startDate, endDate);
+            report.AverageUserSpend = GetAverageUserSpend(startDate, endDate);
+            report.ActiveAuctionsCount = GetActiveAuctionsCount();
+            report.CompletedAuctionsCount = GetCompletedAuctionsCount(startDate, endDate);
+            report.AverageWinningBid = GetAverageWinningBid(startDate, endDate);
+            report.AuctionSuccessRate = GetAuctionSuccessRate(startDate, endDate);
+
+            // New users = registrations in date range
+            report.NewUsers = (from u in db.Users
+                               where u.registrationDate >= startDate && u.registrationDate <= endDate
+                               select u).Count();
+
+            // Total orders = invoices in date range
+            report.TotalOrders = (from i in db.Invoices
+                                  where i.date >= startDate && i.date <= endDate
+                                  select i).Count();
+
+            // Best selling product quantity in range
+            report.BestSellingQuantity = (from il in db.InvoiceLines
+                                          join i in db.Invoices on il.invoiceId equals i.Id
+                                          where i.date >= startDate && i.date <= endDate
+                                          group il by il.productId into g
+                                          select g.Sum(x => x.quantity))
+                                         .DefaultIfEmpty(0)
+                                         .Max();
+
+            // DataTables
+            report.SalesByCategory = GetSalesByCategory(startDate, endDate);
+            report.LowStockItems = GetLowStockProducts(5); // threshold configurable
+            report.StockByCategory = GetStockByCategory();
+            report.DailyRegistrations = GetDailyRegistrationsReport(startDate, endDate);
+
+            return report;
+        }
+
+
     }
 }

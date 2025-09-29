@@ -5,3 +5,10 @@ T:\Campus-master\Campus-master\bin\CampusService.pdb
 T:\Campus-master\Campus-master\obj\Debug\CampusService.dll
 T:\Campus-master\Campus-master\obj\Debug\CampusService.pdb
 T:\Campus-master\Campus-master\obj\Debug\CampusService.csproj.AssemblyReference.cache
+C:\Users\General\Desktop\Campus-master\Campus-master\bin\CampusService.dll.config
+C:\Users\General\Desktop\Campus-master\Campus-master\bin\CampusService.dll
+C:\Users\General\Desktop\Campus-master\Campus-master\bin\CampusService.pdb
+C:\Users\General\Desktop\Campus-master\Campus-master\obj\Debug\CampusService.csproj.AssemblyReference.cache
+C:\Users\General\Desktop\Campus-master\Campus-master\obj\Debug\CampusService.csproj.CoreCompileInputs.cache
+C:\Users\General\Desktop\Campus-master\Campus-master\obj\Debug\CampusService.dll
+C:\Users\General\Desktop\Campus-master\Campus-master\obj\Debug\CampusService.pdb
